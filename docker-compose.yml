@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  # Infraestrutura do Middleware: Fila para comunicação assíncrona
+  queue-broker:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"       # Porta de comunicação interna da fila
+      - "15672:15672"     # Painel Web do RabbitMQ (User/Senha padrão: guest)
+
+  # Serviço 1: O Sensor de Umidade (Produtor)
+  humidity-sensor:
+    build: ./services/humidity-sensor
+    restart: always
+    depends_on:
+      - queue-broker
+    environment:
+      - BROKER_HOST=queue-broker
+
+  # Serviço 2: O Dashboard/Alerta (Consumidor + API REST)
+  humidity-dashboard:
+    build: ./services/humidity-dashboard
+    restart: always
+    ports:
+      - "8080:8080"       # Porta para acessar a API REST de fora do Docker
+    depends_on:
+      - queue-broker
+    environment:
+      - BROKER_HOST=queue-broker
