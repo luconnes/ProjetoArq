@@ -8,10 +8,10 @@ from flask import Flask, jsonify
 app = Flask(__name__)
 broker_host = os.getenv('BROKER_HOST', 'localhost')
 
-# Memória temporária para guardar a última leitura recebida
+#teste teste teste
 ultima_leitura = {"status": "Sem dados recebidos ainda"}
 
-# --- PARTE ASSÍNCRONA: Consumir dados da fila ---
+
 def iniciar_consumidor_fila():
     connection = None
     while not connection:
@@ -32,15 +32,15 @@ def iniciar_consumidor_fila():
     print("Dashboard pronto e escutando a fila de eventos...")
     channel.start_consuming()
 
-# --- PARTE SÍNCRONA: API REST para consultas ---
+
 @app.route('/api/humidity/current', methods=['GET'])
 def get_humidity():
-    # Retorna o dado síncronamente quando requisitado 
+    
     return jsonify(ultima_leitura), 200
 
 if __name__ == '__main__':
-    # Inicializa a escuta da fila em segundo plano (background thread)
+    
     threading.Thread(target=iniciar_consumidor_fila, daemon=True).start()
     
-    # Inicializa o servidor web da API REST na porta 8080
+   
     app.run(host='0.0.0.0', port=8080)
