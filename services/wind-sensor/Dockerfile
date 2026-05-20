@@ -1,10 +1,6 @@
 FROM python:3.10-slim
-
 WORKDIR /app
-
-
 RUN pip install pika
-
-COPY sensor.py .
-
+COPY ./middleware /app/middleware
+COPY ./services/wind-sensor/sensor.py .
 CMD ["python", "-u", "sensor.py"]

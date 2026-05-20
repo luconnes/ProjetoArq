@@ -1,38 +1,40 @@
 version: '3.8'
 
 services:
-  
   queue-broker:
     image: rabbitmq:3-management
+    container_name: queue-broker
     ports:
-      - "5672:5672"       
-      - "15672:15672"     
+      - "5672:5672"
+      - "15672:15672"
+
+  dashboard:
+    build:
+      context: .
+      dockerfile: ./services/dashboard/Dockerfile
+    container_name: dashboard
+    ports:
+      - "8080:8080"
+    depends_on:
+      - queue-broker
+    environment:
+      - BROKER_HOST=queue-broker
 
   humidity-sensor:
     build:
       context: .
       dockerfile: ./services/humidity-sensor/Dockerfile
-    restart: always
+    container_name: humidity-sensor
     depends_on:
       - queue-broker
     environment:
       - BROKER_HOST=queue-broker
 
   wind-sensor:
-    build: ./services/wind-sensor
-    restart: always
-    depends_on:
-      - queue-broker
-    environment:
-      - BROKER_HOST=queue-broker
-
-  humidity-dashboard:
     build:
       context: .
-      dockerfile: ./services/humidity-dashboard/Dockerfile
-    restart: always
-    ports:
-      - "8080:8080"       
+      dockerfile: ./services/wind-sensor/Dockerfile
+    container_name: wind-sensor
     depends_on:
       - queue-broker
     environment:
