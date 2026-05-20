@@ -1,12 +1,9 @@
 FROM python:3.10-slim
-
 WORKDIR /app
+RUN pip install pika flask
 
-
-RUN pip install flask pika
-
-COPY dashboard.py .
-
-EXPOSE 8080
+# Copia a pasta middleware a partir da raiz do projeto
+COPY ./middleware /app/middleware
+COPY ./services/humidity-dashboard/dashboard.py .
 
 CMD ["python", "-u", "dashboard.py"]

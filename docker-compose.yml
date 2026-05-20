@@ -8,9 +8,10 @@ services:
       - "5672:5672"       
       - "15672:15672"     
 
- 
   humidity-sensor:
-    build: ./services/humidity-sensor
+    build:
+      context: .
+      dockerfile: ./services/humidity-sensor/Dockerfile
     restart: always
     depends_on:
       - queue-broker
@@ -26,7 +27,9 @@ services:
       - BROKER_HOST=queue-broker
 
   humidity-dashboard:
-    build: ./services/humidity-dashboard
+    build:
+      context: .
+      dockerfile: ./services/humidity-dashboard/Dockerfile
     restart: always
     ports:
       - "8080:8080"       
