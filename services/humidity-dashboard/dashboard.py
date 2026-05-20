@@ -5,13 +5,13 @@ import time
 import pika
 from flask import Flask, jsonify
 
-# Importa o logger e a nova função de validação de segurança do seu middleware
+
 from middleware.logger import log_mensagem, validar_json_payload
 
 app = Flask(__name__)
 broker_host = os.getenv('BROKER_HOST', 'localhost')
 
-# Estado inicial da leitura na memória temporária
+
 ultima_leitura = {"status": "Sem dados recebidos ainda", "correlation_id": None}
 
 def iniciar_consumidor_fila():
@@ -30,11 +30,11 @@ def iniciar_consumidor_fila():
     def callback(ch, method, properties, body):
         global ultima_leitura
         
-        # 🛡️ SEGURANÇA: O middleware valida se o JSON recebido segue o contrato estrito
+       
         dados_validados = validar_json_payload(body)
         
         if dados_validados is None:
-            # Se o JSON for malicioso, corrompido ou inválido, bloqueia e gera alerta
+           
             log_mensagem(
                 servico="humidity-dashboard",
                 acao="PROCESSAR_DADO",
@@ -43,11 +43,11 @@ def iniciar_consumidor_fila():
             )
             return  # Aborta o processamento para proteger o dashboard
 
-        # Se passou na validação, atualiza o estado e processa normalmente
+       
         ultima_leitura = dados_validados
         c_id = ultima_leitura.get("correlation_id")
         
-        # Registra o log de sucesso com o mesmo ID de correlação
+        
         log_mensagem(
             servico="humidity-dashboard",
             acao="PROCESSAR_DADO",
@@ -56,7 +56,7 @@ def iniciar_consumidor_fila():
             level="INFO"
         )
 
-    #callback de velocidade do vento
+    
     def callbackWind(ch, method, prpoerties, body) :
         global ultima_leitura_vento
         ultima_leitura_vento = json.loads(body)
@@ -74,7 +74,7 @@ def iniciar_consumidor_fila():
 
 @app.route('/api/humidity/current', methods=['GET'])
 def get_humidity():
-    # A API síncrona entrega o JSON completo e validado
+   
     return jsonify(ultima_leitura), 200
 def get_wind():
     return jsonify(ultima_leitura_vento), 200
