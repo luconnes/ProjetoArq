@@ -3,7 +3,7 @@ import json
 import random
 import os
 import pika
-# Importa o componente que criamos na pasta middleware
+
 from middleware.logger import log_mensagem 
 
 broker_host = os.getenv('BROKER_HOST', 'localhost')
@@ -26,14 +26,14 @@ print("Sensor conectado com sucesso ao Middleware de Mensageria!", flush=True)
 while True:
     umidade_atual = random.randint(30, 85)
     
-    # O MIDDLEWARE EM AÇÃO: Gera o ID único e faz o print estruturado em JSON
+    
     c_id = log_mensagem(
         servico="humidity-sensor", 
         acao="ENVIAR_DADO", 
         message=f"Capturando umidade do ar"
     )
     
-    # Monta o payload incluindo o ID gerado pelo middleware
+   
     payload = {
         "correlation_id": c_id,
         "sensor_id": "sensor-sala-01",
