@@ -17,6 +17,14 @@ services:
     environment:
       - BROKER_HOST=queue-broker
 
+  wind-sensor:
+    build: ./services/wind-sensor
+    restart: always
+    depends_on:
+      - queue-broker
+    environment:
+      - BROKER_HOST=queue-broker
+
   humidity-dashboard:
     build: ./services/humidity-dashboard
     restart: always
