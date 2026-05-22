@@ -45,3 +45,10 @@ services:
       - queue-broker
     environment:
       - BROKER_HOST=queue-broker
+  carbon-sensor:
+    build: ./services/carbon-sensor
+    restart: always
+    depends_on:
+      - queue-broker
+    environment:
+      - BROKER_HOST=queue-broker
