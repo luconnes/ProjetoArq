@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   queue-broker:
     image: rabbitmq:3-management
@@ -15,6 +13,7 @@ services:
     container_name: dashboard
     ports:
       - "8080:8080"
+      - "8000:8000"  
     depends_on:
       - queue-broker
     environment:
@@ -35,6 +34,36 @@ services:
       context: .
       dockerfile: ./services/wind-sensor/Dockerfile
     container_name: wind-sensor
+    depends_on:
+      - queue-broker
+    environment:
+      - BROKER_HOST=queue-broker
+
+  luminosity-sensor:
+    build:
+      context: .
+      dockerfile: ./services/luminosity-sensor/Dockerfile
+    container_name: luminosity-sensor
+    depends_on:
+      - queue-broker
+    environment:
+      - BROKER_HOST=queue-broker
+
+  pressure-sensor:
+    build:
+      context: .
+      dockerfile: ./services/pressure-sensor/Dockerfile
+    container_name: pressure-sensor
+    depends_on:
+      - queue-broker
+    environment:
+      - BROKER_HOST=queue-broker
+
+  sensor-temperatura:
+    build:
+      context: .
+      dockerfile: ./services/sensor-temperatura/Dockerfile
+    container_name: sensor-temperatura
     depends_on:
       - queue-broker
     environment:

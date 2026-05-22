@@ -1,11 +1,6 @@
 FROM python:3.10-slim
-
 WORKDIR /app
-
 RUN pip install pika
-
-# Copia a pasta do middleware local e o script do vento para o container
 COPY ./middleware /app/middleware
-COPY ./services/wind-sensor/sensor.py .
-
+COPY ./services/sensor-temperatura/sensor.py .
 CMD ["python", "-u", "sensor.py"]

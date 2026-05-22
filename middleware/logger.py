@@ -2,7 +2,7 @@ import uuid
 import datetime
 import json
 
-# Chaves universais obrigatórias para qualquer sensor
+
 CHAVES_UNIVERSAIS = {"correlation_id", "sensor_id", "tipo_sensor", "timestamp"}
 
 def validar_json_payload(body_string):
