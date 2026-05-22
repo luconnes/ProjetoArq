@@ -109,6 +109,20 @@ services:
     networks:
       - middleware_network
 
+  carbon-sensor:
+    build:
+      context: .
+      dockerfile: ./services/carbon-sensor/Dockerfile
+    container_name: carbon-sensor
+    restart: always
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      - BROKER_HOST=rabbitmq
+    networks:
+      - middleware_network
+
 
 networks:
   middleware_network:
