@@ -17,6 +17,7 @@ import pika
 from flask import Flask, jsonify, render_template_string
 from fastapi import FastAPI, HTTPException, Security, Depends
 from fastapi.security import APIKeyHeader
+from fastapi.middleware.cors import CORSMiddleware
 from middleware.logger import log_mensagem, validar_json_payload
 
 broker_host = os.getenv('BROKER_HOST', 'localhost')
@@ -68,6 +69,14 @@ def verificar_papel_admin(usuario=Depends(obter_usuario_atual)):
 app_fastapi = FastAPI(
     title="API Síncrona Segura de Verificação de Sensores",
     description="Endpoints REST protegidos por autenticação de Token e autorização baseada em papéis (RBAC)."
+)
+
+app_fastapi.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 @app_fastapi.get("/api/sensors/status")
