@@ -1,70 +1,137 @@
+version: '3.8'
+
 services:
-  queue-broker:
+
+  rabbitmq:
     image: rabbitmq:3-management
-    container_name: queue-broker
+    container_name: rabbitmq_broker
+    restart: always
+
     ports:
       - "5672:5672"
       - "15672:15672"
 
+    networks:
+      - middleware_network
+
   dashboard:
     build:
       context: .
-      dockerfile: ./services/dashboard/Dockerfile
-    container_name: dashboard
+      dockerfile: services/dashboard/Dockerfile
+
+    container_name: central_dashboard
+
+    restart: always
+
     ports:
       - "8080:8080"
-      - "8000:8000"  
-    depends_on:
-      - queue-broker
+      - "8000:8000"
+
     environment:
-      - BROKER_HOST=queue-broker
+      - BROKER_HOST=rabbitmq
+      - DB_PATH=/app/data/telemetria.db
+
+    depends_on:
+      - rabbitmq
+
+    volumes:
+      - ./services/dashboard:/app
+      - ./middleware:/app/middleware
+      - ./data:/app/data
+
+    networks:
+      - middleware_network
 
   humidity-sensor:
     build:
       context: .
       dockerfile: ./services/humidity-sensor/Dockerfile
+
     container_name: humidity-sensor
+
+    restart: always
+
     depends_on:
-      - queue-broker
+      - rabbitmq
+
     environment:
-      - BROKER_HOST=queue-broker
+      - BROKER_HOST=rabbitmq
+
+    networks:
+      - middleware_network
 
   wind-sensor:
     build:
       context: .
       dockerfile: ./services/wind-sensor/Dockerfile
+
     container_name: wind-sensor
+
+    restart: always
+
     depends_on:
-      - queue-broker
+      - rabbitmq
+
     environment:
-      - BROKER_HOST=queue-broker
+      - BROKER_HOST=rabbitmq
+
+    networks:
+      - middleware_network
 
   luminosity-sensor:
     build:
       context: .
       dockerfile: ./services/luminosity-sensor/Dockerfile
+
     container_name: luminosity-sensor
+
+    restart: always
+
     depends_on:
-      - queue-broker
+      - rabbitmq
+
     environment:
-      - BROKER_HOST=queue-broker
+      - BROKER_HOST=rabbitmq
+
+    networks:
+      - middleware_network
 
   pressure-sensor:
     build:
       context: .
       dockerfile: ./services/pressure-sensor/Dockerfile
+
     container_name: pressure-sensor
+
+    restart: always
+
     depends_on:
-      - queue-broker
+      - rabbitmq
+
     environment:
-      - BROKER_HOST=queue-broker
+      - BROKER_HOST=rabbitmq
+
+    networks:
+      - middleware_network
 
   sensor-temperatura:
     build:
       context: .
       dockerfile: ./services/sensor-temperatura/Dockerfile
+
     container_name: sensor-temperatura
+
+    restart: always
+
     depends_on:
-      - queue-broker
+      - rabbitmq
+
     environment:
-      - BROKER_HOST=queue-broker
+      - BROKER_HOST=rabbitmq
+
+    networks:
+      - middleware_network
+
+networks:
+  middleware_network:
+    driver: bridge
