@@ -11,6 +11,11 @@ services:
       - "15672:15672"
     networks:
       - middleware_network
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "check_running"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   dashboard:
     build:
@@ -19,13 +24,14 @@ services:
     container_name: central_dashboard
     restart: always
     ports:
-      - "8080:8080"
+      - "9090:9090"
       - "8000:8000"
     environment:
       - BROKER_HOST=rabbitmq
       - DB_PATH=/app/data/telemetria.db
     depends_on:
-      - rabbitmq
+      rabbitmq:
+       condition: service_healthy
     volumes:
       # Modificado para não poluir a pasta do seu código-fonte
       - ./services/dashboard:/app/src
