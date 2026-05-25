@@ -338,4 +338,4 @@ if __name__ == "__main__":
     threading.Thread(target=rodar_fastapi, daemon=True).start()
 
     # 4. Inicia a interface principal do cliente
-    app_flask.run(host="0.0.0.0", port=8080)
+    app_flask.run(host="0.0.0.0", port=9090)
