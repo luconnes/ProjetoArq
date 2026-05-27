@@ -1,6 +1,6 @@
 # Sistema Distribuído de Telemetria Ambiental
 
-Este projeto consiste em um ecossistema de microsserviços maduro, voltado para a coleta, processamento, validação e visualização de dados de telemetria ambiental em tempo real. A arquitetura foi projetada com base nos pilares de sistemas distribuídos, combinando abordagens síncronas e assíncronas para mitigar falhas comuns de rede, garantir a integridade dos dados na persistência e isolar o domínio de cada componente.
+Este projeto consiste em um ecossistema de microsserviços maduro, voltado para a coleta, processamento, validação e visualização de dados de telemetria ambiental em tempo real. A arquitetura foi projetada com base nos pilares de sistemas distribuídos, combinando abordagens síncronas e assíncronas, garantir a integridade dos dados na persistência e isolar o domínio de cada componente.
 
 ## Arquitetura e Papéis dos Componentes
 
@@ -36,10 +36,10 @@ O ecossistema foi projetado sob a premissa de que falhas em sistemas distribuíd
 ### 5. Observabilidade e Tracing Distribuído
 A depuração de sistemas assíncronos é complexa devido à falta de linearidade nas execuções. Para contornar esse problema, o sistema implementa:
 * **Correlation ID:** Cada leitura gerada por um sensor recebe um identificador único universal (UUID). Esse identificador é injetado no payload e permanece atrelado ao dado durante o tráfego pelas filas e no momento da gravação no banco, permitindo rastrear o ciclo de vida completo de uma mensagem específica.
-* **Logs Estruturados:** As saídas de console foram padronizadas em estruturas legíveis por máquina (JSON), facilitando a futura integração com centralizadores de logs.
+* **Logs Estruturados:** As saídas de console foram padronizadas em estruturas JSON.
 
 ### 6. Segurança Baseada em RBAC e Tokens
-A segurança da camada síncrona (API REST) bloqueia acessos indevidos por meio de dois mecanismos em FastAPI:
+A segurança da camada síncrona bloqueia acessos indevidos por meio de dois mecanismos em FastAPI:
 * **Autenticação por API Keys:** Os endpoints exigem a passagem de uma chave secreta no cabeçalho HTTP da requisição (`Authorization: Bearer <TOKEN>`), impedindo requisições de agentes externos anônimos.
 * **Controle de Acesso Baseado em Papéis (RBAC):** O sistema diferencia as permissões dos tokens autenticados. Usuários com a regra `Viewer` possuem direitos estritos de leitura de dados no dashboard, enquanto contas com perfil `Admin` detêm privilégios para executar varreduras no histórico do banco e realizar tarefas administrativas.
 
@@ -60,7 +60,7 @@ A segurança da camada síncrona (API REST) bloqueia acessos indevidos por meio 
 
 ## Payload JSON
 
-Qualque componente que publique na fila de telemetria deve seguir rigorosamente o formato abaixo:
+Qualque componente que publique na fila deve seguir o formato abaixo:
 
 ```json
 {
