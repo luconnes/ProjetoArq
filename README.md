@@ -48,7 +48,7 @@ A segurança da camada síncrona bloqueia acessos indevidos por meio de dois mec
 
 Segue abaixo as responsabilidades e o que cada membro da equipe desenvolveu no projeto:
 
-* **João (joao.vr.fernandes@gmail.com):** * Desenvolveu e implementou o microsserviço do sensor de velocidade do vento.
+* **João:** * Desenvolveu e implementou o microsserviço do sensor de velocidade do vento.
   * Realizou correções de infraestrutura, tratando adequadamente uma condição de corrida ao alterar o mapeamento de portas do serviço do *dashboard*.
 
 * **Lucas Ribeiro D'Azevedo:** * Responsável pela camada de segurança e telemetria.
