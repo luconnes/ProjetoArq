@@ -5,7 +5,7 @@ import threading
 import sqlite3
 import pika
 
-# Garanter que o contêiner localize a pasta compartilhada de middlewares
+
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 sys.path.append("/app")
 
@@ -14,22 +14,15 @@ from fastapi import FastAPI, HTTPException, Depends
 from fastapi.security import APIKeyHeader
 from fastapi.middleware.cors import CORSMiddleware
 
-# Importação dos middlewares centrais do projeto
 from middleware.logger import log_mensagem, validar_json_payload
 
-# =========================================================
-# CONFIGURAÇÕES GERAIS
-# =========================================================
 
 broker_host = os.getenv("BROKER_HOST", "localhost")
-# Alterado para a raiz de /app para evitar falhas de permissão de subpastas no Windows
+
 DB_PATH = os.getenv("DB_PATH", "/app/telemetria.db")
 
 TIMEOUT_SENSOR_ONLINE = 7
 
-# =========================================================
-# ESTADO EM MEMÓRIA
-# =========================================================
 
 dados_sensores = {}
 
@@ -41,9 +34,6 @@ status_sincrono_sensores = {
     "temperature": {"status": "Inativo", "ultima_verificacao": "-"}
 }
 
-# =========================================================
-# SEGURANÇA RBAC
-# =========================================================
 
 USUARIOS_PERMISSOES = {
     "token-admin-123": {"nome": "Lucas", "role": "admin"},
@@ -52,9 +42,7 @@ USUARIOS_PERMISSOES = {
 
 api_key_header = APIKeyHeader(name="X-API-KEY", auto_error=False)
 
-# =========================================================
-# SQLITE (PERSISTÊNCIA)
-# =========================================================
+
 
 def conectar_banco():
     return sqlite3.connect(DB_PATH, check_same_thread=False)
@@ -126,9 +114,7 @@ def salvar_leitura_no_banco(dados):
     except Exception as e:
         print(f"❌ [SQLITE ERRO] Falha crítica de inserção: {e}", flush=True)
 
-# =========================================================
-# AUTENTICAÇÃO E AUTORIZAÇÃO (RBAC)
-# =========================================================
+
 
 def obter_usuario_atual(token: str = Depends(api_key_header)):
     if not token or token not in USUARIOS_PERMISSOES:
@@ -146,9 +132,7 @@ def verificar_admin(usuario=Depends(obter_usuario_atual)):
         raise HTTPException(status_code=403, detail="Acesso negado: privilégios de administrador requeridos.")
     return usuario 
 
-# =========================================================
-# API REST SÍNCRONA (FASTAPI)
-# =========================================================
+
 
 app_fastapi = FastAPI(title="API Middleware - Controle Síncrono")
 
@@ -202,9 +186,6 @@ def rodar_fastapi():
     import uvicorn
     uvicorn.run(app_fastapi, host="0.0.0.0", port=8000, log_level="warning")
 
-# =========================================================
-# CONSUMIDOR ASÍNCRONO DE FILAS (AMQP / RABBITMQ)
-# =========================================================
 
 def iniciar_consumidor_fila():
     connection = None
@@ -252,9 +233,7 @@ def iniciar_consumidor_fila():
     print("🚀 [AMQP] Consumidor assíncrono conectado com sucesso ao RabbitMQ.", flush=True)
     channel.start_consuming()
 
-# =========================================================
-# SERVIDOR INTERFACE GRAPHICA (FLASK)
-# =========================================================
+
 
 app_flask = Flask(__name__)
 
@@ -323,19 +302,17 @@ def home():
 def sensores_atuais():
     return jsonify(dados_sensores)
 
-# =========================================================
-# EXECUÇÃO ORQUESTRADA DO MIDDLEWARE
-# =========================================================
+
 
 if __name__ == "__main__":
-    # 1. Garante a criação estruturada do arquivo do SQLite
+   
     inicializar_banco()
 
-    # 2. Inicializa o barramento assíncrono (RabbitMQ)
+    
     threading.Thread(target=iniciar_consumidor_fila, daemon=True).start()
 
-    # 3. Inicializa o barramento síncrono securizado (FastAPI)
+    
     threading.Thread(target=rodar_fastapi, daemon=True).start()
 
-    # 4. Inicia a interface principal do cliente
-    app_flask.run(host="0.0.0.0", port=9090)
+    
+    app_flask.run(host="0.0.0.0", port=8080)

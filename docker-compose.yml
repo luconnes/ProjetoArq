@@ -9,13 +9,13 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
-    networks:
-      - middleware_network
     healthcheck:
       test: ["CMD", "rabbitmq-diagnostics", "check_running"]
       interval: 5s
       timeout: 5s
       retries: 5
+    networks:
+      - middleware_network
 
   dashboard:
     build:
@@ -24,16 +24,15 @@ services:
     container_name: central_dashboard
     restart: always
     ports:
-      - "9090:9090"
+      - "8080:8080"
       - "8000:8000"
     environment:
       - BROKER_HOST=rabbitmq
       - DB_PATH=/app/data/telemetria.db
     depends_on:
       rabbitmq:
-       condition: service_healthy
+        condition: service_healthy
     volumes:
-      # Modificado para não poluir a pasta do seu código-fonte
       - ./services/dashboard:/app/src
       - ./middleware:/app/middleware
       - ./data:/app/data
@@ -47,7 +46,8 @@ services:
     container_name: humidity-sensor
     restart: always
     depends_on:
-      - rabbitmq
+      rabbitmq:
+        condition: service_healthy
     environment:
       - BROKER_HOST=rabbitmq
     networks:
@@ -60,7 +60,8 @@ services:
     container_name: wind-sensor
     restart: always
     depends_on:
-      - rabbitmq
+      rabbitmq:
+        condition: service_healthy
     environment:
       - BROKER_HOST=rabbitmq
     networks:
@@ -73,7 +74,8 @@ services:
     container_name: luminosity-sensor
     restart: always
     depends_on:
-      - rabbitmq
+      rabbitmq:
+        condition: service_healthy
     environment:
       - BROKER_HOST=rabbitmq
     networks:
@@ -86,7 +88,8 @@ services:
     container_name: pressure-sensor
     restart: always
     depends_on:
-      - rabbitmq
+      rabbitmq:
+        condition: service_healthy
     environment:
       - BROKER_HOST=rabbitmq
     networks:
@@ -99,7 +102,8 @@ services:
     container_name: sensor-temperatura
     restart: always
     depends_on:
-      - rabbitmq
+      rabbitmq:
+        condition: service_healthy
     environment:
       - BROKER_HOST=rabbitmq
     networks:
