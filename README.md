@@ -62,8 +62,7 @@ Segue abaixo as responsabilidades e o que cada membro da equipe desenvolveu no p
 
 * **Vinícius Mergulhão:** * Atuou na adição e desenvolvimento do sensor de luminosidade do projeto (`luminosity-sensor`).
 
-* **Marina Mendes / ninadurand (mendesdurandmarina@gmail.com):**
-  * Desenvolveu e integrou o microsserviço responsável pelo sensor de emissão de carbono (`carbon-sensor`).
+* **Marina Mendes:** * Desenvolveu e integrou o microsserviço responsável pelo sensor de emissão de carbono (`carbon-sensor`).
 
 ##  Tecnologias e Dependências
 
