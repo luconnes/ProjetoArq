@@ -111,12 +111,18 @@ services:
 
 
     pressure-sensor:
-    build: ./services/pressure-sensor
+    build:
+      context: .
+      dockerfile: ./services/pressure-sensor/Dockerfile
+    container_name: pressure-sensor
     restart: always
     depends_on:
-      - queue-broker
+      rabbitmq:
+        condition: service_healthy
     environment:
-      - BROKER_HOST=queue-broker
+      - BROKER_HOST=rabbitmq
+    networks:
+      - middleware_network
 
 networks:
   middleware_network:
