@@ -109,6 +109,15 @@ services:
     networks:
       - middleware_network
 
+
+    pressure-sensor:
+    build: ./services/pressure-sensor
+    restart: always
+    depends_on:
+      - queue-broker
+    environment:
+      - BROKER_HOST=queue-broker
+
 networks:
   middleware_network:
     driver: bridge
