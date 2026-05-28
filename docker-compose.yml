@@ -110,20 +110,6 @@ services:
       - middleware_network
 
 
-    pressure-sensor:
-    build:
-      context: .
-      dockerfile: ./services/pressure-sensor/Dockerfile
-    container_name: pressure-sensor
-    restart: always
-    depends_on:
-      rabbitmq:
-        condition: service_healthy
-    environment:
-      - BROKER_HOST=rabbitmq
-    networks:
-      - middleware_network
-
 networks:
   middleware_network:
     driver: bridge
