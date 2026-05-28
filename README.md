@@ -43,6 +43,53 @@ A segurança da camada síncrona bloqueia acessos indevidos por meio de dois mec
 * **Autenticação por API Keys:** Os endpoints exigem a passagem de uma chave secreta no cabeçalho HTTP da requisição (`Authorization: Bearer <TOKEN>`), impedindo requisições de agentes externos anônimos.
 * **Controle de Acesso Baseado em Papéis (RBAC):** O sistema diferencia as permissões dos tokens autenticados. Usuários com a regra `Viewer` possuem direitos estritos de leitura de dados no dashboard, enquanto contas com perfil `Admin` detêm privilégios para executar varreduras no histórico do banco e realizar tarefas administrativas.
 
+
+## 7. Contribuições da Equipe
+
+Segue abaixo as responsabilidades e o que cada membro da equipe desenvolveu no projeto:
+
+* **João (joao.vr.fernandes@gmail.com):** * Desenvolveu e implementou o microsserviço do sensor de velocidade do vento.
+  * Realizou correções de infraestrutura, tratando adequadamente uma condição de corrida ao alterar o mapeamento de portas do serviço do *dashboard*.
+
+* **Lucas Ribeiro D'Azevedo:** * Responsável pela camada de segurança e telemetria.
+  * Implementou senhas de segurança e separação de acessos em duas *roles* distintas para verificar o funcionamento dos sensores e acessar dados.
+  * Adicionou um sistema de validação de segurança para os *payloads* JSON recebidos pela mensageria, criando regras de *logging* para rejeitar dados corrompidos.
+  * Configurou o arquivo de dados de telemetria.
+
+* **Pedro Alves:** * Responsável pela criação da *feature* e integração completa do sensor de temperatura (`sensor-temperatura`).
+
+* **Pablo Felipe:** * Desenvolveu a implementação do sensor de pressão atmosférica (`pressure-sensor`).
+
+* **Vinícius Mergulhão:** * Atuou na adição e desenvolvimento do sensor de luminosidade do projeto (`luminosity-sensor`).
+
+* **Marina Mendes / ninadurand (mendesdurandmarina@gmail.com):**
+  * Desenvolveu e integrou o microsserviço responsável pelo sensor de emissão de carbono (`carbon-sensor`).
+
+##  Tecnologias e Dependências
+
+O projeto foi construído utilizando uma arquitetura de microsserviços e mensageria. As principais tecnologias englobam:
+
+* **Docker & Docker Compose:** Para conteinerização e orquestração dos serviços.
+* **Python 3.10:** Linguagem base para todos os sensores e o *dashboard*.
+* **RabbitMQ:** *Message Broker* utilizado para a comunicação assíncrona entre os sensores e o *dashboard*.
+* **Pika:** Biblioteca Python para integração com o RabbitMQ.
+* **Flask:** *Microframework* web utilizado para expor a API do *dashboard*.
+
+---
+
+##  Passo a Passo para Execução
+
+### Pré-requisitos
+Para rodar este projeto localmente, você não precisa instalar o Python ou as bibliotecas diretamente na sua máquina, pois tudo está encapsulado nos contêineres. Você precisará apenas ter instalado:
+* [Git](https://git-scm.com/)
+* [Docker](https://docs.docker.com/get-docker/)
+* [Docker Compose](https://docs.docker.com/compose/install/)
+
+### 1. Clonando o Repositório
+Abra o terminal e clone o repositório do projeto:
+```bash
+git clone <URL_DO_SEU_REPOSITORIO>
+cd <NOME_DA_PASTA_DO_REPOSITORIO>
 ---
 
 ## Fluxo da Informação 
