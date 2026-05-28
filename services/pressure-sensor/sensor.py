@@ -51,7 +51,8 @@ while True:
         payload = {
             "correlation_id": c_id,
             "sensor_id": "sensor-pressao-01",
-            "pressure": pressao_atual, 
+            "tipo_sensor": "pressure",  
+            "pressure": pressao_atual,  
             "timestamp": time.time()
         }
         
@@ -67,3 +68,4 @@ while True:
        
         connection = conectar_com_retry()
         channel = connection.channel()
+
