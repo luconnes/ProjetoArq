@@ -39,12 +39,13 @@ while True:
         
         variacao = random.uniform(-2.0, 2.0)
         pressao_atual = round(pressao_atual + variacao, 2)
-        
+        id_customizado = f"p-{uuid.uuid4()}"
         
         c_id = log_mensagem(
             servico="pressure-sensor", 
             acao="ENVIAR_DADO", 
-            message=f"Capturando pressão atmosférica: {pressao_atual} hPa"
+            message=f"Capturando pressão atmosférica: {pressao_atual} hPa",
+            correlation_id=id_customizado
         )
         
         payload = {
