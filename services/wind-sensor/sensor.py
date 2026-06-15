@@ -3,39 +3,62 @@ import json
 import random
 import os
 import pika
+import uuid
+from middleware.logger import log_mensagem 
 
 
 broker_host = os.getenv('BROKER_HOST', 'localhost')
+print("Analisador de Velocidade de Vento: Sensor iniciando...", flush=True)
 
-print("Analisador de Velocidade de Vento: Sensor iniciando...")
 
- 
 connection = None
 while not connection:
     try:
         connection = pika.BlockingConnection(pika.ConnectionParameters(host=broker_host))
     except pika.exceptions.AMQPConnectionError:
-        print("Aguardando o broker de mensagens iniciar...")
+        print("Aguardando o broker de mensagens iniciar...", flush=True)
         time.sleep(3)
 
 channel = connection.channel()
-channel.queue_declare(queue='wind-velocity_readings')
 
-print("Sensor conectado com sucesso ao Middleware de Mensageria!")
 
+channel.queue_declare(queue='humidity_readings')
+
+print("Sensor conectado com sucesso ao Middleware de Mensageria!", flush=True)
 
 while True:
+    
+    velocidade_vento = random.randint(30, 85)
+    
+    
+    id_customizado = f"b-{uuid.uuid4()}"
+    
+    
+    c_id = log_mensagem(
+        servico="wind-sensor", 
+        acao="ENVIAR_DADO", 
+        message="Capturando velocidade do vento",
+        correlation_id=id_customizado
+    )
+    
+    
     payload = {
-        "sensor_id": "sensor-sala-01",
-        "wind-velocity": random.randint(30, 85), 
+        "correlation_id": c_id,
+        "sensor_id": "b-sensor-vento-anemometro-01",
+        "tipo_sensor": "wind",
+        "wind_speed": velocidade_vento,
         "timestamp": time.time()
     }
     
     
     channel.basic_publish(
-        exchange='',
-        routing_key='wind-velocity_readings',
+        exchange='', 
+        routing_key='humidity_readings', 
         body=json.dumps(payload)
     )
-    print(f"[Sensor] Dado de velocidade do vento enviado: {payload['wind-velocity']}m/s")
-    time.sleep(3) # 3 segundos de delay
+    
+    
+    print(f"🍃 [VENTO] Enviado: {velocidade_vento} km/h | ID: {c_id[:10]}...", flush=True)
+    
+    # Delay de 3 segundos entre as capturas
+    time.sleep(3)
